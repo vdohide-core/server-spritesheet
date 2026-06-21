@@ -46,7 +46,7 @@ MONGODB_URI=mongodb+srv://...
 STORAGE_ID=          # UUID ของ storage เมื่อรันบนเครื่อง storage
 STORAGE_PATH=/home/files
 PORT=8084
-WORKER_ID=hostname@1  # ตั้งโดย systemd
+WORKER_ID=spritesheet_hostname@1  # ตั้งโดย systemd
 ```
 
 ## MongoDB settings

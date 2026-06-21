@@ -118,7 +118,7 @@ ExecStart=$APP_DIR/$APP_NAME
 Restart=always
 RestartSec=5
 EnvironmentFile=$APP_DIR/.env
-Environment="WORKER_ID=$(hostname)@%i"
+Environment="WORKER_ID=spritesheet_$(hostname)@%i"
 
 [Install]
 WantedBy=multi-user.target

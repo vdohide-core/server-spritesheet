@@ -11,7 +11,9 @@ import (
 	"server-spritesheet/internal/logger"
 )
 
-// GenerateWorkerID returns WORKER_ID env or hostname@1.
+const WorkerTypeSpritesheet = "spritesheet"
+
+// GenerateWorkerID returns WORKER_ID env or spritesheet_hostname@1.
 func GenerateWorkerID() string {
 	if envWorkerID := os.Getenv("WORKER_ID"); envWorkerID != "" {
 		return envWorkerID
@@ -20,7 +22,7 @@ func GenerateWorkerID() string {
 	if err != nil {
 		hostname = "unknown"
 	}
-	return fmt.Sprintf("%s@1", hostname)
+	return fmt.Sprintf("%s_%s@1", WorkerTypeSpritesheet, hostname)
 }
 
 // RandomString generates a random alphanumeric string.

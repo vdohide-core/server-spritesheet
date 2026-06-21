@@ -18,11 +18,11 @@ import (
 // ─── Heartbeat ────────────────────────────────────────────────
 
 // startHeartbeat sends a heartbeat to the workers collection every 1 minute.
-// It upserts by workerId (hostname@n) and reports status, active jobs, and system metrics.
+// It upserts by workerId (type_hostname@n) and reports status, active jobs, and system metrics.
 func startHeartbeat(wID string) {
 	log.Printf("💓 Starting heartbeat (every 1 min, workerId=%s)", wID)
 
-	hostname, pid := parseWorkerID(wID)
+	workerType, hostname, pid := parseWorkerID(wID)
 	ip := getOutboundIP()
 
 	doHeartbeat := func() {
@@ -51,7 +51,7 @@ func startHeartbeat(wID string) {
 				"hostname":    hostname,
 				"ip":          ip,
 				"pid":         pid,
-				"type":        "spritesheet",
+				"type":        workerType,
 				"status":      status,
 				"activeJobs":  activeJobs,
 				"maxJobs":     1, // each worker handles 1 job at a time
@@ -83,10 +83,20 @@ func startHeartbeat(wID string) {
 	}
 }
 
-// parseWorkerID splits "hostname@n" into hostname and pid (sequence number).
-func parseWorkerID(wID string) (hostname string, pid int) {
+// parseWorkerID splits "type_hostname@n" into worker type, hostname, and pid.
+// Supports legacy "hostname@n" (type defaults to "spritesheet").
+func parseWorkerID(wID string) (workerType, hostname string, pid int) {
 	parts := strings.SplitN(wID, "@", 2)
-	hostname = parts[0]
+	prefix := parts[0]
+
+	workerType = "spritesheet"
+	if idx := strings.Index(prefix, "_"); idx >= 0 {
+		workerType = prefix[:idx]
+		hostname = prefix[idx+1:]
+	} else {
+		hostname = prefix
+	}
+
 	pid = os.Getpid()
 	return
 }
